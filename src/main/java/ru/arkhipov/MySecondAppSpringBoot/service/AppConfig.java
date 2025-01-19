@@ -1,4 +1,4 @@
-package ru.arkhipov.MySecondAppSpringBoot.config;
+package ru.arkhipov.MySecondAppSpringBoot.service;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

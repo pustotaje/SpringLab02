@@ -6,7 +6,7 @@ public enum Systems {
     ERP("ERP"),
     CRM("CRM"),
     WMS("WMS"),
-    S1("S1");  // Добавлен новый элемент
+    S1("S1");
 
     private final String name;
 

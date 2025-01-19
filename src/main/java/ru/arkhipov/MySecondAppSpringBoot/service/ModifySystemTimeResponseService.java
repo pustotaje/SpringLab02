@@ -1,19 +1,21 @@
 package ru.arkhipov.MySecondAppSpringBoot.service;
 
 import ru.arkhipov.MySecondAppSpringBoot.model.Response;
-import ru.arkhipov.MySecondAppSpringBoot.util.DateTimeUtil;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.Instant;
 
-@Service
-@Qualifier("ModifySystemTimeResponseService")
-public class ModifySystemTimeResponseService implements ModifyResponseService {
+public class ModifySystemTimeResponseService {
 
-    @Override
-    public Response modify(Response response) {
-        response.setSystemTime(DateTimeUtil.getCustomFormat().format(new Date()));
-        return response;
+    // Ваши другие методы
+
+    public void modifyResponse(Response response) {
+        // Если у вас есть строка, которую нужно преобразовать в Instant
+        String systemTimeString = "2025-01-19T20:08:06.445Z"; // Пример строки
+
+        // Преобразуем строку в Instant
+        Instant systemTime = Instant.parse(systemTimeString);
+
+        // Устанавливаем в объект response
+        response.setSystemTime(systemTime);
     }
 }

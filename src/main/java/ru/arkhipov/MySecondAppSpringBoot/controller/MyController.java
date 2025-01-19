@@ -1,90 +1,47 @@
 package ru.arkhipov.MySecondAppSpringBoot.controller;
 
-import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
-import ru.arkhipov.MySecondAppSpringBoot.exception.UnsupportedCodeException;
-import ru.arkhipov.MySecondAppSpringBoot.exception.ValidationFailedException;
-import ru.arkhipov.MySecondAppSpringBoot.model.*;
-import ru.arkhipov.MySecondAppSpringBoot.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import ru.arkhipov.MySecondAppSpringBoot.util.DateTimeUtil;
-import java.util.Date;
+import org.springframework.web.bind.annotation.*;
+import ru.arkhipov.MySecondAppSpringBoot.model.Request;
+import ru.arkhipov.MySecondAppSpringBoot.model.Response;
+import ru.arkhipov.MySecondAppSpringBoot.service.ModifySourceRequestService;
 
-@Slf4j
+import java.time.Instant;
+
 @RestController
+@RequestMapping("/feedback")
 public class MyController {
 
-    private final ValidationService validationService;
-    private final ModifyResponseService modifyResponseService;
-    private final ModifyRequestService modifyRequestService;
-    private final ModifyRequestService modifySourceRequestService;
+    private final ModifySourceRequestService modifySourceRequestService;
 
-    @Autowired
-    public MyController(ValidationService validationService,
-                        @Qualifier("ModifySystemTimeResponseService") ModifyResponseService modifyResponseService,
-                        ModifyRequestService modifyRequestService,
-                        @Qualifier("modifySourceRequestService") ModifyRequestService modifySourceRequestService) {
-        this.validationService = validationService;
-        this.modifyResponseService = modifyResponseService;
-        this.modifyRequestService = modifyRequestService;
+    public MyController(ModifySourceRequestService modifySourceRequestService) {
         this.modifySourceRequestService = modifySourceRequestService;
     }
 
-    @PostMapping("/feedback")
-    public ResponseEntity<Response> feedback(@Valid @RequestBody Request request, BindingResult bindingResult) {
+    @PostMapping
+    public ResponseEntity<Response> feedback(@RequestBody Request request) {
+        // Логика для обработки запроса
+        Response response = new Response();
+        response.setUid(request.getUid());
+        response.setOperationUid(request.getOperationUid());
+        response.setSystemTime(Instant.now());
 
-        log.info("request: {}", request);
+        // Пример: рассчитать бонус на основе данных запроса
+        response.setAnnualBonus(calculateAnnualBonus(request)); // Пример вычисления
+        response.setErrorCode("none");
+        response.setErrorMessage("No errors");
 
-        Response response = Response.builder()
-                .uid(request.getUid())
-                .operationUid(request.getOperationUid())
-                .systemTime(DateTimeUtil.getCustomFormat().format(new Date()))
-                .code(Codes.SUCCESS.toString())
-                .errorCode(ErrorCodes.EMPTY.toString())
-                .errorMessage(ErrorMessages.EMPTY.toString())
-                .build();
+        // Дополнительные данные
+        response.setPosition(request.getPosition());
+        response.setSalary(request.getSalary());
+        response.setWorkDays(request.getWorkDays());
 
-        log.info("response: {}", response);
+        return ResponseEntity.ok(response);
+    }
 
-        try {
-            validationService.isValid(bindingResult);
-        } catch (ValidationFailedException e) {
-            response.setCode(Codes.FAILED.toString());
-            response.setErrorCode(ErrorCodes.VALIDATION_EXCEPTION.toString());
-            response.setErrorMessage(ErrorMessages.VALIDATION.toString());
-            log.error("validation exception: {}", response);
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
-
-        catch (Exception e) {
-            response.setCode(Codes.FAILED.toString());
-            response.setErrorCode(ErrorCodes.UNKNOWN_EXCEPTION.toString());
-            response.setErrorMessage(ErrorMessages.UNKNOWN.toString());
-            log.error("unknown exception: {}", response);
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        try {
-            validationService.isCodeValid(request);
-        } catch (UnsupportedCodeException e) {
-            response.setCode(Codes.FAILED.toString());
-            response.setErrorCode(ErrorCodes.VALIDATION_CODE_EXCEPTION.toString());
-            response.setErrorMessage(ErrorMessages.UNSUPPORTED_UID.toString());
-            log.error("unsupported uid: {}", response);
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
-
-        modifyResponseService.modify(response);
-        modifyRequestService.modify(request);
-        modifySourceRequestService.modify(request);
-
-        return new ResponseEntity<>(modifyResponseService.modify(response), HttpStatus.OK);
+    private Double calculateAnnualBonus(Request request) {
+        // Логика для расчета бонуса
+        // Например, бонус рассчитывается как 10% от зарплаты
+        return request.getSalary() * 0.1;
     }
 }

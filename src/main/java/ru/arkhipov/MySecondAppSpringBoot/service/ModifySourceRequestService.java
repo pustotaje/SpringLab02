@@ -17,9 +17,7 @@ public class ModifySourceRequestService implements ModifyRequestService {
     @Override
     public void modify(Request request) {
         request.setSource("Modified source");
-
         HttpEntity<Request> httpEntity = new HttpEntity<>(request);
-
         try {
             restTemplate.exchange("http://localhost:8084/feedback", HttpMethod.POST,
                     httpEntity, new ParameterizedTypeReference<>() {});
