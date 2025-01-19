@@ -3,15 +3,17 @@ package ru.arkhipov.MySecondAppSpringBoot.model;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum Systems {
-    ERP("ERP"), //(«Enterprise Resource Planning»)
-    CRM("CRM"), //(«Customer Relationship Management»)
-    WMS("WMS"); //(Warehouse Management System)
+    ERP("ERP"),
+    CRM("CRM"),
+    WMS("WMS"),
+    S1("S1");  // Добавлен новый элемент
+
     private final String name;
+
     Systems(String name) {
         this.name = name;
     }
 
-    @JsonValue
     public String getName() {
         return name;
     }

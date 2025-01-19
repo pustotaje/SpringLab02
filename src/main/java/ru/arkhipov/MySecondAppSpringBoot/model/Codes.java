@@ -1,5 +1,6 @@
 package ru.arkhipov.MySecondAppSpringBoot.model;
 import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum Codes {
     SUCCESS("success"),
     FAILED("failed");
@@ -9,8 +10,10 @@ public enum Codes {
     }
     @JsonValue
     public String getName() {
-        return name;}
+        return name;
+    }
     @Override
     public String toString() {
-        return name;}
+        return name;
+    }
 }

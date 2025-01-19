@@ -1,5 +1,6 @@
 package ru.arkhipov.MySecondAppSpringBoot.service;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.arkhipov.MySecondAppSpringBoot.model.Response;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -8,7 +9,7 @@ import java.util.UUID;
 
 @Service
 @Qualifier("ModifyOperationUidResponseService")
-public class ModifyOperationUidResponseService implements ModifyResponseService{
+public class ModifyOperationUidResponseService implements ModifyResponseService {
 
     @Override
     public Response modify(Response response) {
